@@ -2,7 +2,7 @@
 
 ---
 
-- [ ] **Project scaffolding**
+- [x] **Project scaffolding**
 
 Initialise the Go module and create the directory structure described in AGENTS.md. Set up `go.mod` with dependencies (`gopkg.in/yaml.v3`, `modernc.org/sqlite`). Create placeholder files so the package structure compiles. Add a minimal `main.go` in `cmd/tracker/` that prints usage and exits.
 

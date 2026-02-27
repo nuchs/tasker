@@ -13,7 +13,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Define core types in `internal/model/`**
+- [x] **Define core types in `internal/model/`**
 
 Create the Go types for the data model: `Issue`, `Event`, `Status`, `Priority`, `IssueType`, `Claim`. Status, Priority, and IssueType should be string types with constants. Event should be a struct that can represent all 10 event types described in SPEC.md, with fields that are populated depending on the event type.
 

@@ -51,7 +51,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Event materialisation**
+- [x] **Event materialisation**
 
 Implement replaying a sequence of events to produce the current state of an issue. Given a `[]Event`, produce an `Issue` struct reflecting the final state. Apply last-write-wins for description, title, priority, acceptance criteria. Track current status, claim state, and dependency list.
 

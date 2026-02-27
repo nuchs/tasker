@@ -128,6 +128,55 @@ func (idx *Index) NextID() (int, error) {
 	return maxID + 1, nil
 }
 
+// UpsertIssue inserts or replaces a single issue in the index, rebuilding its
+// dependency and claim rows. Runs inside a transaction.
+func (idx *Index) UpsertIssue(issue model.Issue, createdAt, updatedAt time.Time) error {
+	tx, err := idx.db.Begin()
+	if err != nil {
+		return fmt.Errorf("index: upsert issue %d: begin: %w", issue.ID, err)
+	}
+	defer tx.Rollback() //nolint:errcheck
+
+	// Remove child rows before replacing the parent.
+	if _, err := tx.Exec(`DELETE FROM claims WHERE issue_id = ?`, issue.ID); err != nil {
+		return fmt.Errorf("index: upsert issue %d: delete claim: %w", issue.ID, err)
+	}
+	if _, err := tx.Exec(`DELETE FROM dependencies WHERE issue_id = ?`, issue.ID); err != nil {
+		return fmt.Errorf("index: upsert issue %d: delete deps: %w", issue.ID, err)
+	}
+
+	if _, err := tx.Exec(
+		`INSERT OR REPLACE INTO issues (id, type, title, status, priority, created_at, updated_at)
+		 VALUES (?, ?, ?, ?, ?, ?, ?)`,
+		issue.ID, string(issue.Type), issue.Title,
+		string(issue.Status), string(issue.Priority),
+		createdAt.UTC().Format(time.RFC3339), updatedAt.UTC().Format(time.RFC3339),
+	); err != nil {
+		return fmt.Errorf("index: upsert issue %d: %w", issue.ID, err)
+	}
+
+	for _, depID := range issue.Depends {
+		if _, err := tx.Exec(
+			`INSERT INTO dependencies (issue_id, depends_on) VALUES (?, ?)`,
+			issue.ID, depID,
+		); err != nil {
+			return fmt.Errorf("index: upsert issue %d: insert dep %d: %w", issue.ID, depID, err)
+		}
+	}
+
+	if issue.Claim != nil {
+		if _, err := tx.Exec(
+			`INSERT INTO claims (issue_id, agent_id, session_id, claimed_at) VALUES (?, ?, ?, ?)`,
+			issue.ID, issue.Claim.AgentID, issue.Claim.SessionID,
+			issue.Claim.ClaimedAt.UTC().Format(time.RFC3339),
+		); err != nil {
+			return fmt.Errorf("index: upsert issue %d: insert claim: %w", issue.ID, err)
+		}
+	}
+
+	return tx.Commit()
+}
+
 // scanIssues executes q with args and returns the results as []IssueMeta.
 func (idx *Index) scanIssues(q string, args ...any) ([]IssueMeta, error) {
 	rows, err := idx.db.Query(q, args...)

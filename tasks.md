@@ -97,7 +97,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Store layer — tie files and index together (`internal/store/`)**
+- [x] **Store layer — tie files and index together (`internal/store/`)**
 
 Create a `Store` type that owns both the filesystem path and the SQLite index. Provide methods that combine file operations with index updates:
 - `Create(issue)` — write the content file, update the index

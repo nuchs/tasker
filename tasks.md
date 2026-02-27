@@ -189,7 +189,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — comment command**
+- [x] **CLI — comment command**
 
 Implement `tracker comment <id> "message"`. Appends a comment event to the content file.
 

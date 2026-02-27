@@ -200,7 +200,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — claim and release commands**
+- [x] **CLI — claim and release commands**
 
 Implement `tracker claim <id> --agent <agent-id> --session <session-id>` and `tracker release <id>`. Claim appends a `claimed` event and updates the index atomically. Release appends a `released` event recording the previous claimant.
 

@@ -37,6 +37,10 @@ func main() {
 		err = cli.RunUpdate(wd, args, os.Stdout)
 	case "comment":
 		err = cli.RunComment(wd, args, os.Stdout)
+	case "claim":
+		err = cli.RunClaim(wd, args, os.Stdout)
+	case "release":
+		err = cli.RunRelease(wd, args, os.Stdout)
 	default:
 		fmt.Fprintf(os.Stderr, "tracker: unknown command %q\n\n", cmd)
 		usage()

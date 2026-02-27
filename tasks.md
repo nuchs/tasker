@@ -116,7 +116,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — init command**
+- [x] **CLI — init command**
 
 Implement `tracker init --prefix PROJ`. Creates `.tracker/` directory structure, writes `config.yaml` with the prefix, creates empty `issues/` directory, initialises SQLite database, creates `.gitignore` containing `db.sqlite`.
 

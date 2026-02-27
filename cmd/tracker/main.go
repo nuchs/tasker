@@ -41,6 +41,8 @@ func main() {
 		err = cli.RunClaim(wd, args, os.Stdout)
 	case "release":
 		err = cli.RunRelease(wd, args, os.Stdout)
+	case "rebuild":
+		err = cli.RunRebuild(wd, args, os.Stdout)
 	default:
 		fmt.Fprintf(os.Stderr, "tracker: unknown command %q\n\n", cmd)
 		usage()

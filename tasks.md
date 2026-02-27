@@ -212,7 +212,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — rebuild command**
+- [x] **CLI — rebuild command**
 
 Implement `tracker rebuild`. Deletes and regenerates the SQLite database from content files.
 

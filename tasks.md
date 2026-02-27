@@ -154,7 +154,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — list command**
+- [x] **CLI — list command**
 
 Implement `tracker list [--status ...] [--priority ...] [--type ...] [--json]`. Queries the SQLite index and displays matching issues. Default (no filters) shows all non-done, non-cancelled issues.
 

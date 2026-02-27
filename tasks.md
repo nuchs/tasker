@@ -141,7 +141,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — show command**
+- [x] **CLI — show command**
 
 Implement `tracker show <id> [--events] [--json]`. Reads the content file, materialises current state, displays it. With `--events`, shows the full event history. Accepts bare numeric IDs or prefixed IDs. Performs stale claim detection.
 

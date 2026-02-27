@@ -27,6 +27,8 @@ func main() {
 		err = cli.RunInit(wd, args)
 	case "create":
 		err = cli.RunCreate(wd, args, os.Stdout)
+	case "show":
+		err = cli.RunShow(wd, args, os.Stdout)
 	default:
 		fmt.Fprintf(os.Stderr, "tracker: unknown command %q\n\n", cmd)
 		usage()

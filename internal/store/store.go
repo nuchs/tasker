@@ -76,6 +76,15 @@ func (s *Store) ReadyIssues() ([]index.IssueMeta, error) {
 	return s.idx.ReadyIssues()
 }
 
+// Events returns the full raw event log for issue id.
+func (s *Store) Events(id int) ([]model.Event, error) {
+	events, err := ParseFile(s.issueFilePath(id))
+	if err != nil {
+		return nil, fmt.Errorf("store: events issue %d: %w", id, err)
+	}
+	return events, nil
+}
+
 // issueFilePath returns the path to the content file for issue id.
 func (s *Store) issueFilePath(id int) string {
 	var name string

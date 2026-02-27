@@ -166,7 +166,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — ready command**
+- [x] **CLI — ready command**
 
 Implement `tracker ready [--json]`. Runs the ready query and displays results.
 

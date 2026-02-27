@@ -47,6 +47,35 @@ func (s *Store) Close() error {
 	return s.idx.Close()
 }
 
+// FormatID returns the display form of a numeric issue ID, e.g. "PROJ-0042".
+// If the store has no prefix, the bare number is returned.
+func (s *Store) FormatID(id int) string {
+	if s.prefix == "" {
+		return fmt.Sprintf("%d", id)
+	}
+	return fmt.Sprintf("%s-%04d", s.prefix, id)
+}
+
+// NextID returns the next available numeric issue ID.
+func (s *Store) NextID() (int, error) {
+	return s.idx.NextID()
+}
+
+// GetIssueMeta returns the indexed metadata for a single issue.
+func (s *Store) GetIssueMeta(id int) (index.IssueMeta, error) {
+	return s.idx.GetIssueMeta(id)
+}
+
+// ListIssues returns all indexed issues matching f, ordered by ID.
+func (s *Store) ListIssues(f index.Filters) ([]index.IssueMeta, error) {
+	return s.idx.ListIssues(f)
+}
+
+// ReadyIssues returns open, unclaimed issues with all dependencies resolved.
+func (s *Store) ReadyIssues() ([]index.IssueMeta, error) {
+	return s.idx.ReadyIssues()
+}
+
 // issueFilePath returns the path to the content file for issue id.
 func (s *Store) issueFilePath(id int) string {
 	var name string

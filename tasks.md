@@ -128,7 +128,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — create command**
+- [x] **CLI — create command**
 
 Implement `tracker create --title "..." --description "..." [--priority medium] [--type task]`. Assigns next available ID, writes the content file with a `created` event, updates the index. Prints the new issue ID.
 

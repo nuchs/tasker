@@ -25,6 +25,8 @@ func main() {
 	switch cmd {
 	case "init":
 		err = cli.RunInit(wd, args)
+	case "create":
+		err = cli.RunCreate(wd, args, os.Stdout)
 	default:
 		fmt.Fprintf(os.Stderr, "tracker: unknown command %q\n\n", cmd)
 		usage()

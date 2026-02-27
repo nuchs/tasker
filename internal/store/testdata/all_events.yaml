@@ -1,0 +1,69 @@
+---
+event: created
+timestamp: 2025-02-19T10:00:00Z
+id: 1
+type: task
+title: Fix auth token refresh race condition
+status: open
+priority: high
+depends:
+  - 3
+acceptance_criteria: |
+  - Token refresh under concurrent load does not panic
+  - Tests pass with -race flag
+description: |
+  Auth tokens expire after 1h. The refresh logic has a race condition.
+
+---
+event: status_changed
+timestamp: 2025-02-19T14:30:00Z
+status: in_progress
+
+---
+event: title_changed
+timestamp: 2025-02-19T14:35:00Z
+title: Fix auth token refresh race condition (revised)
+
+---
+event: priority_changed
+timestamp: 2025-02-19T14:40:00Z
+priority: medium
+
+---
+event: description_updated
+timestamp: 2025-02-19T15:00:00Z
+description: |
+  Updated description with root cause identified.
+
+---
+event: acceptance_criteria_updated
+timestamp: 2025-02-19T15:05:00Z
+acceptance_criteria: |
+  - Updated acceptance criteria
+
+---
+event: dependencies_changed
+timestamp: 2025-02-19T15:10:00Z
+depends:
+  - 2
+  - 4
+
+---
+event: comment
+timestamp: 2025-02-19T15:15:00Z
+author: claude-session-abc
+body: |
+  Investigated. Straightforward fix: use singleflight.
+
+---
+event: claimed
+timestamp: 2025-02-19T15:20:00Z
+agent_id: claude-session-abc
+session_id: sess-12345
+
+---
+event: released
+timestamp: 2025-02-19T15:25:00Z
+released_by: human
+previous_claimant: claude-session-abc
+reason: stale claim

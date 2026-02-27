@@ -1,0 +1,15 @@
+---
+event: created
+timestamp: 2025-02-19T10:00:00Z
+id: 1
+type: task
+title: Fix auth token refresh race condition
+status: open
+priority: high
+depends:
+  - 3
+acceptance_criteria: |
+  - Token refresh under concurrent load does not panic
+  - Tests pass with -race flag
+description: |
+  Auth tokens expire after 1h. The refresh logic has a race condition.

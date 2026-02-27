@@ -24,7 +24,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **YAML event file parser (`internal/store/`)**
+- [x] **YAML event file parser (`internal/store/`)**
 
 Implement reading and parsing of YAML event files. Given a file path, parse the multi-document YAML stream into a slice of `Event` structs. Handle the `---` document separators correctly. On encountering a malformed YAML document, return an error identifying which event (by index/position) is corrupt. Do not skip or silently ignore bad events.
 

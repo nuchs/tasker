@@ -1,0 +1,14 @@
+---
+event: created
+timestamp: 2025-02-19T10:00:00Z
+id: 1
+type: task
+title: Valid first event
+status: open
+priority: high
+
+---
+event: comment
+timestamp: 2025-02-19T15:00:00Z
+  bad_indentation: this is not valid yaml
+author: someone

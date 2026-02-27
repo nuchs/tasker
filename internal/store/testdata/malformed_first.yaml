@@ -1,0 +1,5 @@
+---
+event: created
+timestamp: 2025-02-19T10:00:00Z
+  bad_indentation: this is not valid yaml
+id: 1

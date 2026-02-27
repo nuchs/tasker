@@ -224,7 +224,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **End-to-end integration tests**
+- [x] **End-to-end integration tests**
 
 Write tests that exercise the full workflow through the CLI: init, create several issues with dependencies, list, ready, claim, comment, update status, release, show with events. Verify the entire lifecycle works correctly.
 

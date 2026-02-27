@@ -33,6 +33,8 @@ func main() {
 		err = cli.RunList(wd, args, os.Stdout)
 	case "ready":
 		err = cli.RunReady(wd, args, os.Stdout)
+	case "update":
+		err = cli.RunUpdate(wd, args, os.Stdout)
 	default:
 		fmt.Fprintf(os.Stderr, "tracker: unknown command %q\n\n", cmd)
 		usage()

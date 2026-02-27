@@ -177,7 +177,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **CLI — update command**
+- [x] **CLI — update command**
 
 Implement `tracker update <id> --status <s> --priority <p> --title "..."`. Each flag generates the appropriate event and appends it to the content file. Updates the index.
 

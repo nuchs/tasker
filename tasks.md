@@ -38,7 +38,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **YAML event file writer (`internal/store/`)**
+- [x] **YAML event file writer (`internal/store/`)**
 
 Implement appending events to a YAML file. Given a file path and an `Event`, serialise it as a YAML document and append it to the file with a `---` separator. Use file locking (`flock`) to prevent concurrent appends to the same file.
 

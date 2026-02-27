@@ -75,7 +75,6 @@ A checked box (`- [x]`) means done. Items are worked on from top to bottom unles
 3. When the task is complete and tests pass, check the box in tasks.md, commit your work, and stop. Do not continue to the next task.
 4. If you discover a bug or problem during work, add it to `issues.md`.
 5. Do not modify the SPEC.md without discussing with the human first.
-6. When that task
 
 ## Commit Conventions
 

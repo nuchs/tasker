@@ -79,7 +79,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **SQLite index — query operations**
+- [x] **SQLite index — query operations**
 
 Implement the query functions the CLI will need:
 - `ListIssues(filters)` — filter by status, priority, type

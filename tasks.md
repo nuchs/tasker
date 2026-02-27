@@ -65,7 +65,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **SQLite index — schema and rebuild (`internal/index/`)**
+- [x] **SQLite index — schema and rebuild (`internal/index/`)**
 
 Implement creating the SQLite database with the schema from SPEC.md. Implement `Rebuild()`: scan all `.yaml` files in the issues directory, parse each, materialise current state, and populate the database. Drop and recreate tables on rebuild.
 

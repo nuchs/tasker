@@ -124,6 +124,18 @@ func TestReset_ClearsAllTables(t *testing.T) {
 	}
 }
 
+func TestOpen_ForeignKeysEnforced(t *testing.T) {
+	idx := openIndex(t)
+	// Attempting to insert a claim for a non-existent issue must fail.
+	_, err := idx.DB().Exec(
+		`INSERT INTO claims (issue_id, agent_id, session_id, claimed_at)
+		 VALUES (999, 'agent', 'sess', '2025-01-01T00:00:00Z')`,
+	)
+	if err == nil {
+		t.Fatal("expected foreign key error inserting claim for non-existent issue, got nil")
+	}
+}
+
 // --- UpsertIssue tests ---
 
 func TestUpsertIssue_Insert(t *testing.T) {

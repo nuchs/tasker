@@ -2,7 +2,7 @@
 
 ---
 
-- [ ] **Race condition in `RunClaim`: check-then-append is not atomic**
+- [x] **Race condition in `RunClaim`: check-then-append is not atomic**
 
 `RunClaim` reads the current claim state via `s.Show(id)`, checks if `issue.Claim != nil`, then
 calls `s.Append` to write the claim event. Two concurrent callers can both observe no claim and
@@ -20,7 +20,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **SQLite foreign key constraints are silently unenforced**
+- [x] **SQLite foreign key constraints are silently unenforced**
 
 SQLite does not enforce `REFERENCES` constraints unless `PRAGMA foreign_keys = ON` is set per
 connection. `index.Open` never sets this pragma. The `claims` and `dependencies` tables both
@@ -35,7 +35,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Partial write in `AppendEvent` can permanently corrupt a content file**
+- [x] **Partial write in `AppendEvent` can permanently corrupt a content file**
 
 `AppendEvent` (in `internal/store/writer.go`) opens the file with `O_APPEND`, acquires an
 `flock`, marshals the event to YAML, then calls `fmt.Fprintf(f, "---\n%s", data)`. If the
@@ -53,7 +53,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **`RunInit` prints its success message to `os.Stdout` directly**
+- [x] **`RunInit` prints its success message to `os.Stdout` directly**
 
 All `Run*` commands accept an `io.Writer` for output, enabling output capture in tests. `RunInit`
 is the only exception: it calls `fmt.Printf(...)` (which writes to `os.Stdout`) instead of
@@ -69,7 +69,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Schema DDL is duplicated in `internal/index/index.go`**
+- [x] **Schema DDL is duplicated in `internal/index/index.go`**
 
 `initDDL` (used by `Open`) and `schemaDDL` (used by `Reset` after `dropDDL`) are almost
 identical strings — one uses `CREATE TABLE IF NOT EXISTS`, the other `CREATE TABLE`. Any schema
@@ -82,7 +82,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Parser accepts events with an empty or unrecognised `event:` field**
+- [x] **Parser accepts events with an empty or unrecognised `event:` field**
 
 `ParseFile` / `parseReader` decodes each YAML document into `model.Event` without checking that
 `ev.Type` is a known, non-empty value. A document with a missing `event:` key, a typo
@@ -99,7 +99,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **Default `tracker list` filtering is done in Go after fetching all rows**
+- [x] **Default `tracker list` filtering is done in Go after fetching all rows**
 
 When no `--status` flag is provided, `RunList` calls `s.ListIssues(index.Filters{})` which
 returns every issue in the database, then discards rows with status `done` or `cancelled` in
@@ -115,7 +115,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **`index.ClaimIssue` is unused by the CLI and uses wall-clock time**
+- [x] **`index.ClaimIssue` is unused by the CLI and uses wall-clock time**
 
 `index.(*Index).ClaimIssue` records `claimed_at` using `time.Now().UTC()` directly, bypassing
 the `Store.now` injection used everywhere else. No CLI code calls this method — claims are
@@ -138,7 +138,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **`TestRebuildConsistency` captures `issue1Before` but never compares it**
+- [x] **`TestRebuildConsistency` captures `issue1Before` but never compares it**
 
 In `internal/cli/integration_test.go`, `issue1Before` is assigned from `s.Show(1)` before the
 rebuild, but the post-rebuild assertion only checks `issue1After.Title` against the hardcoded

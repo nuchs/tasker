@@ -132,6 +132,38 @@ func (s *Store) Create(ev model.Event) (int, error) {
 	return id, nil
 }
 
+// ClaimIssue atomically claims issue id for agentID/sessionID. It opens the
+// content file under an exclusive flock, verifies no claim is currently
+// active, then appends the claimed event — all in a single locked section.
+// This prevents two concurrent callers from both observing "no claim" and
+// both writing a claimed event. Returns an error if already claimed.
+func (s *Store) ClaimIssue(id int, agentID, sessionID string) error {
+	ev := model.Event{
+		Type:      model.EventClaimed,
+		AgentID:   agentID,
+		SessionID: sessionID,
+		Timestamp: s.now(),
+	}
+	path := s.issueFilePath(id)
+	check := func(events []model.Event) error {
+		if len(events) == 0 {
+			return fmt.Errorf("store: claim issue %d: file is empty", id)
+		}
+		issue, err := Materialise(events)
+		if err != nil {
+			return fmt.Errorf("store: claim issue %d: %w", id, err)
+		}
+		if issue.Claim != nil {
+			return fmt.Errorf("store: issue %d is already claimed by agent %q", id, issue.Claim.AgentID)
+		}
+		return nil
+	}
+	if err := ReadThenAppend(path, ev, check); err != nil {
+		return err
+	}
+	return s.syncIndex(id, path)
+}
+
 // Append sets the timestamp on ev, appends it to the content file for issue
 // id, then re-materialises the issue and updates the index.
 func (s *Store) Append(id int, ev model.Event) error {

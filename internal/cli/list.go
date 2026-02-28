@@ -26,8 +26,9 @@ func RunList(wd string, args []string, out io.Writer) error {
 		return err
 	}
 
-	// Validate flag values when provided.
-	var f index.Filters
+	// Validate flag values when provided. When no status filter is given,
+	// exclude terminal statuses (done, cancelled) in the query itself.
+	f := index.Filters{ExcludeTerminal: *statusFlag == ""}
 	if *statusFlag != "" {
 		s := model.Status(*statusFlag)
 		switch s {
@@ -66,17 +67,6 @@ func RunList(wd string, args []string, out io.Writer) error {
 	issues, err := s.ListIssues(f)
 	if err != nil {
 		return fmt.Errorf("list: %w", err)
-	}
-
-	// When no status filter is applied, exclude done and cancelled by default.
-	if f.Status == "" {
-		filtered := issues[:0]
-		for _, m := range issues {
-			if m.Status != model.StatusDone && m.Status != model.StatusCancelled {
-				filtered = append(filtered, m)
-			}
-		}
-		issues = filtered
 	}
 
 	if *jsonOut {

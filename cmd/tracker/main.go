@@ -24,7 +24,7 @@ func main() {
 
 	switch cmd {
 	case "init":
-		err = cli.RunInit(wd, args)
+		err = cli.RunInit(wd, args, os.Stdout)
 	case "create":
 		err = cli.RunCreate(wd, args, os.Stdout)
 	case "show":

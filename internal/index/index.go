@@ -20,6 +20,17 @@ func Open(path string) (*Index, error) {
 	if err != nil {
 		return nil, fmt.Errorf("index: open %s: %w", path, err)
 	}
+	// Use a single connection so per-connection PRAGMAs apply consistently.
+	db.SetMaxOpenConns(1)
+	// Wait up to 10 seconds for a lock rather than failing immediately.
+	if _, err := db.Exec("PRAGMA busy_timeout = 10000"); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("index: set busy timeout: %w", err)
+	}
+	if _, err := db.Exec("PRAGMA foreign_keys = ON"); err != nil {
+		db.Close()
+		return nil, fmt.Errorf("index: enable foreign keys: %w", err)
+	}
 	idx := &Index{db: db}
 	if err := idx.initSchema(); err != nil {
 		db.Close()
@@ -68,29 +79,6 @@ DROP TABLE IF EXISTS claims;
 DROP TABLE IF EXISTS dependencies;
 DROP TABLE IF EXISTS issues;`
 
-// schemaDDL creates tables without IF NOT EXISTS (used after dropDDL).
-const schemaDDL = `
-CREATE TABLE issues (
-    id          INTEGER PRIMARY KEY,
-    type        TEXT NOT NULL CHECK(type IN ('task', 'issue')),
-    title       TEXT NOT NULL,
-    status      TEXT NOT NULL CHECK(status IN ('draft', 'open', 'in_progress',
-                'review', 'done', 'cancelled', 'blocked')),
-    priority    TEXT NOT NULL CHECK(priority IN ('high', 'medium', 'low')),
-    created_at  TEXT NOT NULL,
-    updated_at  TEXT NOT NULL
-);
-CREATE TABLE dependencies (
-    issue_id    INTEGER NOT NULL REFERENCES issues(id),
-    depends_on  INTEGER NOT NULL REFERENCES issues(id),
-    PRIMARY KEY (issue_id, depends_on)
-);
-CREATE TABLE claims (
-    issue_id    INTEGER PRIMARY KEY REFERENCES issues(id),
-    agent_id    TEXT NOT NULL,
-    session_id  TEXT NOT NULL,
-    claimed_at  TEXT NOT NULL
-);`
 
 func (idx *Index) initSchema() error {
 	if _, err := idx.db.Exec(initDDL); err != nil {
@@ -105,7 +93,7 @@ func (idx *Index) Reset() error {
 	if _, err := idx.db.Exec(dropDDL); err != nil {
 		return fmt.Errorf("index: reset: drop: %w", err)
 	}
-	if _, err := idx.db.Exec(schemaDDL); err != nil {
+	if _, err := idx.db.Exec(initDDL); err != nil {
 		return fmt.Errorf("index: reset: create schema: %w", err)
 	}
 	return nil

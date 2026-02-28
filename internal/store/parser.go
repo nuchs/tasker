@@ -52,6 +52,9 @@ func parseReader(path string, r io.Reader) ([]model.Event, error) {
 		if err != nil {
 			return nil, &ParseError{Path: path, Index: i, Cause: err}
 		}
+		if ev.Type == "" {
+			return nil, &ParseError{Path: path, Index: i, Cause: fmt.Errorf("missing or empty event type")}
+		}
 		events = append(events, ev)
 	}
 	return events, nil

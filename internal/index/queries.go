@@ -21,9 +21,10 @@ type IssueMeta struct {
 
 // Filters constrains a ListIssues query. Zero-value fields are not applied.
 type Filters struct {
-	Status   model.Status
-	Priority model.Priority
-	Type     model.IssueType
+	Status          model.Status
+	Priority        model.Priority
+	Type            model.IssueType
+	ExcludeTerminal bool // when true, exclude done and cancelled issues
 }
 
 // ListIssues returns all issues matching f, ordered by id.
@@ -42,6 +43,9 @@ func (idx *Index) ListIssues(f Filters) ([]IssueMeta, error) {
 	if f.Type != "" {
 		q += " AND type = ?"
 		args = append(args, string(f.Type))
+	}
+	if f.ExcludeTerminal {
+		q += " AND status NOT IN ('done', 'cancelled')"
 	}
 	q += " ORDER BY id"
 	return idx.scanIssues(q, args...)
@@ -84,29 +88,6 @@ func (idx *Index) GetIssueMeta(id int) (IssueMeta, error) {
 		return IssueMeta{}, fmt.Errorf("index: issue %d not found", id)
 	}
 	return issues[0], nil
-}
-
-// ClaimIssue atomically claims issue id for agentID/sessionID. It returns an
-// error if the issue is already claimed. Uses INSERT OR IGNORE so that
-// concurrent callers are serialised by SQLite's write lock; the one that
-// inserts 0 rows knows it lost the race.
-func (idx *Index) ClaimIssue(id int, agentID, sessionID string) error {
-	result, err := idx.db.Exec(
-		`INSERT OR IGNORE INTO claims (issue_id, agent_id, session_id, claimed_at)
-		 VALUES (?, ?, ?, ?)`,
-		id, agentID, sessionID, time.Now().UTC().Format(time.RFC3339),
-	)
-	if err != nil {
-		return fmt.Errorf("index: claim issue %d: %w", id, err)
-	}
-	n, err := result.RowsAffected()
-	if err != nil {
-		return fmt.Errorf("index: claim issue %d: rows affected: %w", id, err)
-	}
-	if n == 0 {
-		return fmt.Errorf("index: issue %d is already claimed", id)
-	}
-	return nil
 }
 
 // ReleaseIssue removes the claim on issue id. It is a no-op if the issue is

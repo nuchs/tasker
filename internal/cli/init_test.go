@@ -1,6 +1,7 @@
 package cli_test
 
 import (
+	"bytes"
 	"os"
 	"path/filepath"
 	"strings"
@@ -14,8 +15,12 @@ import (
 func TestRunInit_CreatesExpectedStructure(t *testing.T) {
 	wd := t.TempDir()
 
-	if err := cli.RunInit(wd, []string{"--prefix", "PROJ"}); err != nil {
+	var buf bytes.Buffer
+	if err := cli.RunInit(wd, []string{"--prefix", "PROJ"}, &buf); err != nil {
 		t.Fatalf("RunInit: %v", err)
+	}
+	if !strings.Contains(buf.String(), "Initialised tracker") {
+		t.Errorf("expected success message in output, got: %q", buf.String())
 	}
 
 	trackerDir := filepath.Join(wd, ".tracker")
@@ -60,7 +65,7 @@ func TestRunInit_CreatesExpectedStructure(t *testing.T) {
 
 func TestRunInit_RequiresPrefix(t *testing.T) {
 	wd := t.TempDir()
-	err := cli.RunInit(wd, []string{})
+	err := cli.RunInit(wd, []string{}, &bytes.Buffer{})
 	if err == nil {
 		t.Fatal("expected error when --prefix is missing, got nil")
 	}
@@ -69,10 +74,10 @@ func TestRunInit_RequiresPrefix(t *testing.T) {
 func TestRunInit_TwiceIsError(t *testing.T) {
 	wd := t.TempDir()
 
-	if err := cli.RunInit(wd, []string{"--prefix", "PROJ"}); err != nil {
+	if err := cli.RunInit(wd, []string{"--prefix", "PROJ"}, &bytes.Buffer{}); err != nil {
 		t.Fatalf("first RunInit: %v", err)
 	}
-	if err := cli.RunInit(wd, []string{"--prefix", "PROJ"}); err == nil {
+	if err := cli.RunInit(wd, []string{"--prefix", "PROJ"}, &bytes.Buffer{}); err == nil {
 		t.Fatal("expected error on second RunInit, got nil")
 	}
 }
@@ -80,7 +85,7 @@ func TestRunInit_TwiceIsError(t *testing.T) {
 func TestRunInit_DatabaseHasSchema(t *testing.T) {
 	wd := t.TempDir()
 
-	if err := cli.RunInit(wd, []string{"--prefix", "T"}); err != nil {
+	if err := cli.RunInit(wd, []string{"--prefix", "T"}, &bytes.Buffer{}); err != nil {
 		t.Fatalf("RunInit: %v", err)
 	}
 
@@ -94,7 +99,7 @@ func TestRunInit_DatabaseHasSchema(t *testing.T) {
 
 func TestFindTrackerDir_FindsInCurrent(t *testing.T) {
 	wd := t.TempDir()
-	cli.RunInit(wd, []string{"--prefix", "X"}) //nolint:errcheck
+	cli.RunInit(wd, []string{"--prefix", "X"}, &bytes.Buffer{}) //nolint:errcheck
 
 	got, err := cli.FindTrackerDir(wd)
 	if err != nil {
@@ -108,7 +113,7 @@ func TestFindTrackerDir_FindsInCurrent(t *testing.T) {
 
 func TestFindTrackerDir_FindsInParent(t *testing.T) {
 	root := t.TempDir()
-	cli.RunInit(root, []string{"--prefix", "X"}) //nolint:errcheck
+	cli.RunInit(root, []string{"--prefix", "X"}, &bytes.Buffer{}) //nolint:errcheck
 
 	subdir := filepath.Join(root, "a", "b", "c")
 	if err := os.MkdirAll(subdir, 0755); err != nil {

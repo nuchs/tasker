@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"io"
 	"os"
-
-	"github.com/nuchs/tasker/internal/model"
 )
 
 // RunClaim implements the `tracker claim <id> --agent <agent-id> --session <session-id>` subcommand.
@@ -44,19 +42,7 @@ func RunClaim(wd string, args []string, out io.Writer) error {
 	}
 	defer s.Close()
 
-	issue, _, err := s.Show(id)
-	if err != nil {
-		return fmt.Errorf("claim: %w", err)
-	}
-	if issue.Claim != nil {
-		return fmt.Errorf("claim: issue %s is already claimed by agent %q", s.FormatID(id), issue.Claim.AgentID)
-	}
-
-	if err := s.Append(id, model.Event{
-		Type:      model.EventClaimed,
-		AgentID:   *agentFlag,
-		SessionID: *sessionFlag,
-	}); err != nil {
+	if err := s.ClaimIssue(id, *agentFlag, *sessionFlag); err != nil {
 		return fmt.Errorf("claim: %w", err)
 	}
 

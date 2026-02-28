@@ -2,6 +2,7 @@ package cli_test
 
 import (
 	"bytes"
+	"io"
 	"strings"
 	"testing"
 
@@ -11,7 +12,7 @@ import (
 func initTracker(t *testing.T, prefix string) string {
 	t.Helper()
 	wd := t.TempDir()
-	if err := cli.RunInit(wd, []string{"--prefix", prefix}); err != nil {
+	if err := cli.RunInit(wd, []string{"--prefix", prefix}, io.Discard); err != nil {
 		t.Fatalf("RunInit: %v", err)
 	}
 	return wd

@@ -2,9 +2,6 @@ package index_test
 
 import (
 	"database/sql"
-	"fmt"
-	"sync"
-	"sync/atomic"
 	"testing"
 
 	"github.com/nuchs/tasker/internal/index"
@@ -351,68 +348,6 @@ func TestGetIssueMeta_NotFound(t *testing.T) {
 	_, err := idx.GetIssueMeta(999)
 	if err == nil {
 		t.Fatal("expected error for missing issue, got nil")
-	}
-}
-
-// --- ClaimIssue ---
-
-func TestClaimIssue(t *testing.T) {
-	idx := openIndex(t)
-	db := idx.DB()
-	insertIssue(t, db, 1, "task", "Issue", "open", "high")
-
-	if err := idx.ClaimIssue(1, "agent-x", "sess-y"); err != nil {
-		t.Fatalf("ClaimIssue: %v", err)
-	}
-
-	var agentID, sessionID string
-	if err := db.QueryRow(
-		`SELECT agent_id, session_id FROM claims WHERE issue_id = 1`,
-	).Scan(&agentID, &sessionID); err != nil {
-		t.Fatalf("SELECT claim: %v", err)
-	}
-	if agentID != "agent-x" {
-		t.Errorf("agent_id: got %q", agentID)
-	}
-	if sessionID != "sess-y" {
-		t.Errorf("session_id: got %q", sessionID)
-	}
-}
-
-func TestClaimIssue_AlreadyClaimed(t *testing.T) {
-	idx := openIndex(t)
-	db := idx.DB()
-	insertIssue(t, db, 1, "task", "Issue", "open", "high")
-	insertClaim(t, db, 1)
-
-	if err := idx.ClaimIssue(1, "agent-2", "sess-2"); err == nil {
-		t.Fatal("expected error claiming already-claimed issue, got nil")
-	}
-}
-
-func TestClaimIssue_Concurrent(t *testing.T) {
-	idx := openIndex(t)
-	db := idx.DB()
-	insertIssue(t, db, 1, "task", "Contested", "open", "high")
-
-	const n = 20
-	var wg sync.WaitGroup
-	var successes atomic.Int32
-
-	for i := 0; i < n; i++ {
-		wg.Add(1)
-		go func(i int) {
-			defer wg.Done()
-			err := idx.ClaimIssue(1, fmt.Sprintf("agent-%d", i), fmt.Sprintf("sess-%d", i))
-			if err == nil {
-				successes.Add(1)
-			}
-		}(i)
-	}
-	wg.Wait()
-
-	if successes.Load() != 1 {
-		t.Errorf("expected exactly 1 successful claim, got %d", successes.Load())
 	}
 }
 

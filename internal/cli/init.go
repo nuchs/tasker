@@ -3,6 +3,7 @@ package cli
 import (
 	"flag"
 	"fmt"
+	"io"
 	"os"
 	"path/filepath"
 
@@ -15,7 +16,7 @@ import (
 //
 // Running init twice in the same directory is an error — if .tracker/ already
 // exists the command fails immediately without modifying any files.
-func RunInit(wd string, args []string) error {
+func RunInit(wd string, args []string, out io.Writer) error {
 	fs := flag.NewFlagSet("init", flag.ContinueOnError)
 	fs.SetOutput(os.Stderr)
 	prefix := fs.String("prefix", "", "project prefix for issue IDs (e.g. PROJ)")
@@ -50,6 +51,6 @@ func RunInit(wd string, args []string) error {
 	}
 	s.Close()
 
-	fmt.Printf("Initialised tracker with prefix %s in %s\n", *prefix, trackerDir)
+	fmt.Fprintf(out, "Initialised tracker with prefix %s in %s\n", *prefix, trackerDir)
 	return nil
 }

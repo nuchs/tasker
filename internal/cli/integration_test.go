@@ -300,11 +300,10 @@ func TestRebuildConsistency(t *testing.T) {
 		t.Fatalf("OpenStore (before): %v", err)
 	}
 	before, err := s.ListIssues(index.Filters{})
-	issue1Before, _, err1 := s.Show(1)
 	issue2Before, _, err2 := s.Show(2)
 	s.Close()
-	if err != nil || err1 != nil || err2 != nil {
-		t.Fatalf("pre-rebuild reads: %v %v %v", err, err1, err2)
+	if err != nil || err2 != nil {
+		t.Fatalf("pre-rebuild reads: %v %v", err, err2)
 	}
 
 	runRebuild(t, wd)
@@ -346,5 +345,4 @@ func TestRebuildConsistency(t *testing.T) {
 	if issue1After.Title != "Alpha revised" {
 		t.Errorf("issue 1 title after rebuild: got %q, want 'Alpha revised'", issue1After.Title)
 	}
-	_ = issue1Before
 }

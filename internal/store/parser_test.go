@@ -224,6 +224,20 @@ func TestParseFile_MalformedSecondEvent(t *testing.T) {
 	}
 }
 
+func TestParseFile_EmptyEventType(t *testing.T) {
+	_, err := store.ParseFile(filepath.Join("testdata", "empty_event_type.yaml"))
+	if err == nil {
+		t.Fatal("expected error for empty event type, got nil")
+	}
+	var pe *store.ParseError
+	if !errors.As(err, &pe) {
+		t.Fatalf("expected *store.ParseError, got %T: %v", err, err)
+	}
+	if pe.Index != 0 {
+		t.Errorf("Index: got %d, want 0", pe.Index)
+	}
+}
+
 func TestParseFile_NotFound(t *testing.T) {
 	_, err := store.ParseFile("testdata/nonexistent.yaml")
 	if err == nil {

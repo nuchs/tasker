@@ -2,7 +2,10 @@ package cli_test
 
 import (
 	"bytes"
+	"fmt"
 	"strings"
+	"sync"
+	"sync/atomic"
 	"testing"
 
 	"github.com/nuchs/tasker/internal/cli"
@@ -140,5 +143,55 @@ func TestRunClaim_InvalidID(t *testing.T) {
 	var buf bytes.Buffer
 	if err := cli.RunClaim(wd, []string{"not-an-id", "--agent", "a", "--session", "s"}, &buf); err == nil {
 		t.Fatal("expected error for invalid ID")
+	}
+}
+
+func TestRunClaim_ConcurrentClaim(t *testing.T) {
+	wd := initTracker(t, "T")
+	runCreate(t, wd, "--title", "Contested issue")
+
+	const n = 20
+	var wg sync.WaitGroup
+	var successes atomic.Int32
+
+	for i := 0; i < n; i++ {
+		wg.Add(1)
+		go func(i int) {
+			defer wg.Done()
+			var buf bytes.Buffer
+			err := cli.RunClaim(wd, []string{
+				"1",
+				"--agent", fmt.Sprintf("agent-%d", i),
+				"--session", fmt.Sprintf("sess-%d", i),
+			}, &buf)
+			if err == nil {
+				successes.Add(1)
+			}
+		}(i)
+	}
+	wg.Wait()
+
+	if successes.Load() != 1 {
+		t.Errorf("expected exactly 1 successful claim, got %d", successes.Load())
+	}
+
+	// Content file must have exactly one claimed event.
+	s, err := cli.OpenStore(wd)
+	if err != nil {
+		t.Fatalf("OpenStore: %v", err)
+	}
+	events, err := s.Events(1)
+	s.Close()
+	if err != nil {
+		t.Fatalf("Events: %v", err)
+	}
+	var claimCount int
+	for _, ev := range events {
+		if ev.Type == model.EventClaimed {
+			claimCount++
+		}
+	}
+	if claimCount != 1 {
+		t.Errorf("expected 1 claimed event in file, got %d", claimCount)
 	}
 }

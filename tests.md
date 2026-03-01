@@ -34,7 +34,7 @@ reports success.
 ```sh
 mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
-ls .tracker/
+ls -a .tracker/
 ls .tracker/issues/
 cat .tracker/config.yaml
 cat .tracker/.gitignore
@@ -43,7 +43,7 @@ cat .tracker/.gitignore
 **Expected output:**
 
 - `tracker init` prints: `Initialised tracker with prefix PROJ in <path>/.tracker`
-- `ls .tracker/` lists: `config.yaml  db.sqlite  issues  .gitignore`
+- `ls -a .tracker/` lists: `.  ..  .gitignore  config.yaml  db.sqlite  issues`
 - `ls .tracker/issues/` produces no output (empty directory)
 - `cat .tracker/config.yaml` contains `prefix: PROJ`
 - `cat .tracker/.gitignore` contains `db.sqlite`

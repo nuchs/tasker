@@ -151,3 +151,52 @@ Acceptance criteria:
 - Or remove the `issue1Before` capture and the `_ = issue1Before` line if the direct string
   check is sufficient
 
+---
+
+- [ ] **`tracker show`: flags after positional ID are silently ignored (T-010, T-011)**
+
+Go's `flag.FlagSet.Parse` stops at the first non-flag argument. In `RunShow`, `fs.Parse(args)`
+is called with all arguments including the positional ID, so when the ID comes first (e.g.
+`tracker show 1 --json`), parsing stops at `"1"` and `--json` / `--events` are never processed.
+The command silently falls back to plain text output with no error.
+
+Affected tests:
+- T-010: `tracker show 1 --json` outputs plain text instead of JSON
+- T-011: `tracker show 1 --events` outputs plain issue view instead of event log
+
+Relevant file: `internal/cli/show.go:23` (`fs.Parse(args)`).
+
+The fix is to split positional arguments from flags before parsing, matching the pattern used by
+`RunUpdate`, `RunClaim`, and `RunRelease` (which take the ID as `args[0]` and call
+`fs.Parse(args[1:])`).
+
+Acceptance criteria:
+- `tracker show 1 --json` outputs valid JSON
+- `tracker show 1 --events` outputs the event history
+- `tracker show --json 1` (flag before ID) continues to work as before
+
+---
+
+- [ ] **`tracker update` and `tracker claim` report wrong error when ID is omitted but flags are provided (T-034, T-042)**
+
+Both `RunUpdate` and `RunClaim` take the first element of `args` as the issue ID, then call
+`fs.Parse(args[1:])`. When the user omits the ID and provides only flags (e.g.
+`tracker update --status done` or `tracker claim --agent a --session s`), `args[0]` becomes
+the first flag name (`"--status"` or `"--agent"`). `fs.Parse(args[1:])` then sees the flag
+value as a positional argument, parses no flags, and the subsequent validation checks fire with
+misleading errors:
+
+- `tracker update --status done` → `"at least one of --status, --priority, or --title is required"` (T-034)
+- `tracker claim --agent a --session s` → `"--agent is required"` (T-042)
+
+Expected error in both cases: `"missing issue ID"`.
+
+Relevant files: `internal/cli/update.go:24`, `internal/cli/claim.go:19`.
+
+Fix: before taking `args[0]` as the ID, check whether it starts with `"-"`. If it does, return
+`"missing issue ID"` immediately.
+
+Acceptance criteria:
+- `tracker update --status done` prints error containing `missing issue ID` and exits non-zero
+- `tracker claim --agent a --session s` prints error containing `missing issue ID` and exits non-zero
+

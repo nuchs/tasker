@@ -2,11 +2,12 @@
 
 ## Preamble
 
-Each test must be run in its own isolated directory under `/tmp`. Before running any test,
+Each test must be run in its own isolated directory under `./testdata`. Before running any test,
 generate a fresh directory and work inside it:
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX)
+mkdir -p ./testdata
+TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX)
 cd "$TEST_DIR"
 ```
 
@@ -19,7 +20,7 @@ go build -o /usr/local/bin/tracker ./cmd/tracker
 ```
 
 Each test is independent. Do not reuse a directory across tests unless the test explicitly
-says to continue from a prior step. Clean up with `rm -rf "$TEST_DIR"` when done.
+says to continue from a prior step. Clean up with `rm -rf "$TEST_DIR"` when done, or remove all test directories with `rm -rf ./testdata`.
 
 ---
 
@@ -31,7 +32,7 @@ reports success.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 ls .tracker/
 ls .tracker/issues/
@@ -57,7 +58,7 @@ does not create any files.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init
 echo "exit code: $?"
 ls .tracker 2>&1
@@ -79,7 +80,7 @@ fails without modifying the existing setup.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker init --prefix OTHER
 echo "exit code: $?"
@@ -103,7 +104,7 @@ the correct defaults and prints the assigned ID.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "My first task"
 ls .tracker/issues/
@@ -124,7 +125,7 @@ ls .tracker/issues/
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix BUG
 tracker create --title "First task" --priority high --type task \
   --description "Do the first thing" \
@@ -148,7 +149,7 @@ tracker create --title "First bug" --priority low --type issue \
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --priority high
 echo "exit code: $?"
@@ -170,7 +171,7 @@ ls .tracker/issues/
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Bad priority" --priority urgent
 echo "exit code: $?"
@@ -190,7 +191,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Bad type" --type epic
 echo "exit code: $?"
@@ -211,7 +212,7 @@ accepting both bare and prefixed IDs.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "My task" --priority high --type issue \
   --description "A detailed description" \
@@ -245,7 +246,7 @@ Acceptance Criteria:
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "JSON task" --priority medium --type task \
   --description "Desc" --acceptance-criteria "AC"
@@ -277,7 +278,7 @@ including the initial `created` event.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Track me"
 tracker update 1 --status in_progress
@@ -301,7 +302,7 @@ tracker show 1 --events
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker show 99
 echo "exit code: $?"
@@ -322,7 +323,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Open task"
 tracker create --title "Done task"
@@ -349,7 +350,7 @@ including terminal ones.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Task A"
 tracker create --title "Task B"
@@ -372,7 +373,7 @@ tracker list --status open
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "High priority task" --priority high
 tracker create --title "Low priority task" --priority low
@@ -394,7 +395,7 @@ tracker list --priority low
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "A task" --type task
 tracker create --title "A bug" --type issue
@@ -416,7 +417,7 @@ tracker list --type issue
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "First" --priority high
 tracker create --title "Second" --priority low
@@ -436,7 +437,7 @@ prints a friendly message rather than crashing.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker list
 ```
@@ -456,7 +457,7 @@ no issues found
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker list --status pending
 echo "exit code: $?"
@@ -476,7 +477,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker ready
 ```
@@ -497,7 +498,7 @@ appears in `tracker ready`.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Ready to go" --priority high
 tracker ready
@@ -518,7 +519,7 @@ tracker ready
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Blocker"
 tracker create --title "Dependent"
@@ -560,7 +561,7 @@ tracker ready
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Blocker"
 tracker create --title "Dependent"
@@ -590,7 +591,7 @@ tracker ready
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Blocker"
 tracker create --title "Dependent"
@@ -619,7 +620,7 @@ tracker ready
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Work item"
 tracker ready
@@ -642,7 +643,7 @@ tracker ready
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Low task" --priority low
 tracker create --title "High task" --priority high
@@ -665,7 +666,7 @@ tracker ready
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Ready item" --priority high
 tracker ready --json
@@ -684,7 +685,7 @@ which is reflected in subsequent `tracker show`.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Workflow test"
 tracker update 1 --status in_progress
@@ -711,7 +712,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Priority test" --priority low
 tracker show 1
@@ -733,7 +734,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Old title"
 tracker update 1 --title "New title"
@@ -753,7 +754,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Original" --priority low
 tracker update 1 --status in_progress --priority high --title "Renamed"
@@ -773,7 +774,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Test issue"
 tracker update 1
@@ -794,7 +795,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Test issue"
 tracker update 1 --status flying
@@ -817,7 +818,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker update --status done
 echo "exit code: $?"
@@ -838,7 +839,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Issue to comment on"
 tracker comment 1 "This is my first comment"
@@ -861,7 +862,7 @@ tracker show 1 --events
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Test issue"
 tracker comment 1 ""
@@ -882,7 +883,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Test issue"
 tracker comment 1
@@ -904,7 +905,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Claimable task"
 tracker claim 1 --agent agent-alpha --session sess-001
@@ -925,7 +926,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Contested task"
 tracker claim 1 --agent agent-1 --session sess-1
@@ -950,7 +951,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Test issue"
 tracker claim 1 --session sess-1
@@ -971,7 +972,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Test issue"
 tracker claim 1 --agent agent-1
@@ -992,7 +993,7 @@ echo "exit code: $?"
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker claim --agent agent-1 --session sess-1
 echo "exit code: $?"
@@ -1013,7 +1014,7 @@ claimant in the event log.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Work item"
 tracker claim 1 --agent agent-1 --session sess-1
@@ -1039,7 +1040,7 @@ tracker show 1 --events
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Unclaimed task"
 tracker release 1
@@ -1063,7 +1064,7 @@ released.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Handoff task"
 tracker claim 1 --agent agent-1 --session sess-1
@@ -1085,7 +1086,7 @@ tracker show 1
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker release
 echo "exit code: $?"
@@ -1106,7 +1107,7 @@ and reports the correct issue count.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Issue one"
 tracker create --title "Issue two"
@@ -1130,7 +1131,7 @@ tracker list
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Alpha" --priority high
 tracker create --title "Beta" --type issue
@@ -1171,7 +1172,7 @@ diff show2-before.txt show2-after.txt
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Claimed task"
 tracker claim 1 --agent agent-z --session sess-z
@@ -1194,7 +1195,7 @@ commands.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix PROJ
 tracker create --title "Format test"
 
@@ -1225,7 +1226,7 @@ list → ready → claim → comment → update → release → ready again → 
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 tracker init --prefix WF
 
 # Create three issues
@@ -1300,7 +1301,7 @@ error when run in a directory without `.tracker/`.
 **Steps:**
 
 ```sh
-TEST_DIR=$(mktemp -d /tmp/tracker-test-XXXXXX) && cd "$TEST_DIR"
+mkdir -p ./testdata && TEST_DIR=$(mktemp -d ./testdata/tracker-test-XXXXXX) && cd "$TEST_DIR"
 # Do NOT run tracker init
 
 tracker create --title "Should fail"

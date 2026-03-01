@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 )
 
 // RunClaim implements the `tracker claim <id> --agent <agent-id> --session <session-id>` subcommand.
@@ -16,7 +17,7 @@ func RunClaim(wd string, args []string, out io.Writer) error {
 	agentFlag := fs.String("agent", "", "agent ID claiming the issue")
 	sessionFlag := fs.String("session", "", "session ID for this claim")
 
-	if len(args) == 0 {
+	if len(args) == 0 || strings.HasPrefix(args[0], "-") {
 		return fmt.Errorf("claim: missing issue ID")
 	}
 	idStr := args[0]

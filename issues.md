@@ -153,7 +153,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **`tracker show`: flags after positional ID are silently ignored (T-010, T-011)**
+- [x] **`tracker show`: flags after positional ID are silently ignored (T-010, T-011)**
 
 Go's `flag.FlagSet.Parse` stops at the first non-flag argument. In `RunShow`, `fs.Parse(args)`
 is called with all arguments including the positional ID, so when the ID comes first (e.g.
@@ -177,7 +177,7 @@ Acceptance criteria:
 
 ---
 
-- [ ] **`tracker update` and `tracker claim` report wrong error when ID is omitted but flags are provided (T-034, T-042)**
+- [x] **`tracker update` and `tracker claim` report wrong error when ID is omitted but flags are provided (T-034, T-042)**
 
 Both `RunUpdate` and `RunClaim` take the first element of `args` as the issue ID, then call
 `fs.Parse(args[1:])`. When the user omits the ID and provides only flags (e.g.
@@ -199,4 +199,26 @@ Fix: before taking `args[0]` as the ID, check whether it starts with `"-"`. If i
 Acceptance criteria:
 - `tracker update --status done` prints error containing `missing issue ID` and exits non-zero
 - `tracker claim --agent a --session s` prints error containing `missing issue ID` and exits non-zero
+
+---
+
+- [x] **T-001: test document expects `ls .tracker/` to show `.gitignore` but Linux `ls` hides dotfiles**
+
+In `tests.md` T-001, the expected output states:
+
+> `ls .tracker/` lists: `config.yaml  db.sqlite  issues  .gitignore`
+
+On Linux (and macOS), plain `ls` does not display files whose names begin with `.`, so `.gitignore` is silently omitted from the output. Running the test produces:
+
+```
+config.yaml
+db.sqlite
+issues
+```
+
+The `.gitignore` file is created correctly (confirmed by `cat .tracker/.gitignore` showing `db.sqlite`), so the tracker behaviour is correct. The defect is in the test document.
+
+Acceptance criteria:
+- Either change the step to `ls -a .tracker/` so that `.gitignore` appears in the listing, or
+- Update the expected output to note that `.gitignore` is a hidden file and will not appear with plain `ls`, and verify its existence via `cat` instead.
 

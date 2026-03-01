@@ -20,14 +20,25 @@ func RunShow(wd string, args []string, out io.Writer) error {
 	showEvents := fs.Bool("events", false, "show full event history")
 	jsonOut := fs.Bool("json", false, "output as JSON")
 
-	if err := fs.Parse(args); err != nil {
+	// Separate the positional ID from flag arguments so that both
+	// `tracker show 1 --json` and `tracker show --json 1` are accepted.
+	var idStr string
+	var flagArgs []string
+	for _, a := range args {
+		if strings.HasPrefix(a, "-") {
+			flagArgs = append(flagArgs, a)
+		} else if idStr == "" {
+			idStr = a
+		}
+	}
+	if err := fs.Parse(flagArgs); err != nil {
 		return err
 	}
-	if fs.NArg() == 0 {
+	if idStr == "" {
 		return fmt.Errorf("show: missing issue ID")
 	}
 
-	id, err := ParseID(fs.Arg(0))
+	id, err := ParseID(idStr)
 	if err != nil {
 		return fmt.Errorf("show: %w", err)
 	}

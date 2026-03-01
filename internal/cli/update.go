@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strings"
 
 	"github.com/nuchs/tasker/internal/model"
 )
@@ -21,7 +22,7 @@ func RunUpdate(wd string, args []string, out io.Writer) error {
 
 	// Expect the ID as the first positional argument, before any flags.
 	// This allows the natural form `tracker update <id> --status done`.
-	if len(args) == 0 {
+	if len(args) == 0 || strings.HasPrefix(args[0], "-") {
 		return fmt.Errorf("update: missing issue ID")
 	}
 	idStr := args[0]
